@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
-import { removeComment } from './actions/post_actions';
+import { removeComment } from './actions/PostActions';
 import { connect } from 'react-redux';
 
 const style = {

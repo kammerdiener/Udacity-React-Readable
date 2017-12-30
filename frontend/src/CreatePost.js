@@ -4,7 +4,7 @@ import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import randomString from 'randomstring';
-import { getPosts } from './actions/post_actions';
+import { getPosts } from './actions/PostActions';
 import { addPost } from './api';
 import { connect } from 'react-redux';
 import DropDownMenu from 'material-ui/DropDownMenu';

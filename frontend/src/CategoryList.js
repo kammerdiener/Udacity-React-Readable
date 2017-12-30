@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { getCategories } from './actions/category_actions';
+import { getCategories } from './actions/CategoryActions';
 import { Link } from 'react-router-dom';
 
 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { getPosts, getPost } from './actions/post_actions';
+import { getPosts, getPost } from './actions/PostActions';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import VoteButton from './VoteButton';

@@ -4,7 +4,7 @@ import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import randomString from 'randomstring';
-import { createComment } from './actions/post_actions';
+import { createComment } from './actions/PostActions';
 import { connect } from 'react-redux';
 
 class CreateComment extends React.Component {

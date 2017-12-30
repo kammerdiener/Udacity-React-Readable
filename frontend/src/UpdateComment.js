@@ -3,7 +3,7 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
-import { updateComment } from './actions/post_actions';
+import { updateComment } from './actions/PostActions';
 import { connect } from 'react-redux';
 
 class DialogExampleSimple extends React.Component {

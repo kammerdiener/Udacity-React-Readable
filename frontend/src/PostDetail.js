@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
 import 'react-table/react-table.css'
-import { getPost } from './actions/post_actions';
+import { getPost } from './actions/PostActions';
 import moment from 'moment';
 import DeletePost from './DeletePost';
 import UpdatePost from './UpdatePost';

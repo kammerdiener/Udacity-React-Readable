@@ -1,171 +1,135 @@
+import axios from 'axios';
+import {
+    FETCH_POSTS,
+    FETCH_POST,
+    CREATE_POST,
+    EDIT_POST,
+    DELETE_POST,
+    VOTE_POST,
+    POST_SORT_ORDER
+} from './types';
+import {
+    ROOT_URL,
+    AUTH_HEADERS,
+    guid
+} from './constants';
 
-import { fetchPosts, fetchPostsByCategory, fetchCommentsByPost, fetchPost, deletePost, modifyPost, addComment, deleteComment, modifyComment, votePost, voteComment} from '../api';
 
-export const GET_POSTS = "GET_POSTS";
-export const GET_POST = "GET_POST";
+axios.defaults.headers.common['Authorization'] = AUTH_HEADERS;
 
-export const receivePosts = (posts) => {
-  return {
-    type: GET_POSTS,
-    posts
-  }
-};
+  
+/*
+Actions for posts
+*/
 
-export const receivePost = (post) => {
-  return {
-    type: GET_POST,
-    post
-  }
-};
-
-export const getPosts = (category) => {
-  return (dispatch) => {
-    if (category) {
-      fetchPostsByCategory(category)
-        .then((data) => {
-          return dispatch(receivePosts(data));
-        });
-    } else {
-      fetchPosts()
-        .then((data) => {
-          return dispatch(receivePosts(data));
-        });
+export function fetchPosts() {
+        
+    return dispatch => {
+        axios.get(`${ROOT_URL}/posts`)
+            .then(res => dispatch(fetchPostsSuccess(res.data)));
+        
     }
-  }
-};
+}
 
-export const removePost = (id) => {
-  return (dispatch) => {
-    deletePost(id)
-      .then(() => {
-        fetchPosts()
-          .then((data) => {
-            return dispatch(receivePosts(data));
-          });
-      })
-  }
-};
+export function fetchPost(id) {
+        
+    return dispatch => {
+        axios.get(`${ROOT_URL}/posts/${id}`)
+            .then(res => dispatch(fetchPostSuccess(res.data)));
+        
+    }
+}
 
-export const removeComment = (postId, commentId) => {
-  return (dispatch) => {
-    deleteComment(commentId)
-      .then(() => {
-        fetchPost(postId)
-          .then((post) => {
-            fetchCommentsByPost(postId)
-              .then((comments) => {
-                post.comments = comments;
-                return dispatch(receivePost(post));
-              });
-          })
-      });
-  }
-};
+export function createPost(values, callback) {
+    const { title, body, author, category } = values;
 
-export const getPost = (id) => {
-  return (dispatch) => {
-    fetchPost(id)
-      .then((post) => {
-        fetchCommentsByPost(id)
-          .then((comments) => {
-            post.comments = comments;
-            return dispatch(receivePost(post));
-          });
-      });
-  }
-};
-
-export const updatePost = (id, data) => {
-  return (dispatch) => {
-    console.log(id, data);
-    modifyPost(id, data)
-      .then(() => {
-        fetchPost(id)
-          .then((post) => {
-            fetchCommentsByPost(id)
-              .then((comments) => {
-                post.comments = comments;
-                return dispatch(receivePost(post));
-              });
-          });
-      });
-  }
-};
-
-export const rateComment = (postId, commentId, data) => {
-  return (dispatch) => {
-    voteComment(commentId, data)
-      .then((res) => {
-        fetchPost(postId)
-          .then((post) => {
-            fetchCommentsByPost(postId)
-              .then((comments) => {
-                post.comments = comments;
-                return dispatch(receivePost(post));
-              });
-          });
-      });
-  }
-};
-
-export const ratePost = (postId, data, category, postDetail) => {
-  return (dispatch) => {
-    votePost(postId, data)
-      .then(() => {
-        if (category) {
-          fetchPostsByCategory(category)
-            .then((data) => {
-              return dispatch(receivePosts(data));
+    const data = {
+        id: guid(),
+        timestamp: Date.now(),
+        title,
+        body,
+        author,
+        category
+    }
+        
+    return dispatch => {
+        axios.post(`${ROOT_URL}/posts`, data)
+            .then(res => {
+                callback();
+                dispatch(createPostSuccess(res.data));
             });
-        } else {
-          if (postDetail) {
-            fetchPost(postId)
-              .then((post) => {
-                fetchCommentsByPost(postId)
-                  .then((comments) => {
-                    post.comments = comments;
-                    return dispatch(receivePost(post));
-                  });
-              });
-          } else {
-            fetchPosts(postId)
-              .then((post) => {
-                return dispatch(receivePosts(post));
-              });
-          }
-        }
-      });
-  }
-};
+        
+    }
+}
 
-export const updateComment = (postId, commentId, data) => {
-  return (dispatch) => {
-    modifyComment(commentId, data)
-      .then(() => {
-        fetchPost(postId)
-          .then((post) => {
-            fetchCommentsByPost(postId)
-              .then((comments) => {
-                post.comments = comments;
-                return dispatch(receivePost(post));
-              });
-          });
-      });
-  }
-};
+export function editPost(id, values, callback) {
 
-export const createComment = (data) => {
-  return (dispatch) => {
-    addComment(data)
-      .then((results) => {
-        fetchPost(data.parentId)
-          .then((post) => {
-            fetchCommentsByPost(data.parentId)
-              .then((comments) => {
-                post.comments = comments;
-                return dispatch(receivePost(post));
-              });
-          });
-      });
-  }
-};
+    return dispatch => {
+        axios.put(`${ROOT_URL}/posts/${id}`, values)
+            .then(res => {
+                callback();
+                dispatch(editPostSuccess(res.data))
+            });
+        
+    }
+}
+
+export function deletePost(id, callback) {
+
+    return dispatch => {
+        axios.delete(`${ROOT_URL}/posts/${id}`)
+            .then(res => {
+                callback();
+                dispatch(deletePostSuccess(id));
+            });        
+    }
+}
+
+export function voteForPost(id, vote) {
+    return dispatch => {
+        axios.post(`${ROOT_URL}/posts/${id}`, { option: vote })
+            .then(res => dispatch({ type: VOTE_POST, payload: res.data }))
+    }
+}
+
+export function postSortOrder(sortType) {
+    return {
+        type: POST_SORT_ORDER,
+        payload: sortType
+    }
+}
+
+function fetchPostsSuccess(data) {
+    return {
+        type: FETCH_POSTS,
+        payload: data
+    };
+}
+
+function fetchPostSuccess(data) {
+    return {
+        type: FETCH_POST,
+        payload: data
+    };
+}
+
+function createPostSuccess(data) {
+    return {
+        type: CREATE_POST,
+        payload: data
+    };
+}
+
+function editPostSuccess(data) {
+    return {
+        type: EDIT_POST,
+        payload: data
+    }
+}
+
+function deletePostSuccess(data) {
+    return {
+        type: DELETE_POST,
+        payload: data
+    }
+}

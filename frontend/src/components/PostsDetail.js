@@ -22,7 +22,7 @@ import { timestampToDate } from '../utils/dateHelper';
 class PostsDetail extends Component {
     state = {
         commentCount: 0    
-    }
+    };
     
     componentWillMount() {
         const { id } = this.props.match.params;
@@ -30,10 +30,6 @@ class PostsDetail extends Component {
         this.props.fetchPostCommentsCount(id, (data) => {
             this.setState({ commentCount: data.count })
         });
-    }
-    
-    componentDidReceiveProps(nextProps) {
-        console.log(nextProps)
     }
 
     deleteButtonPress() {
